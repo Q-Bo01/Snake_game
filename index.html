@@ -5,5 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Snake Game</title>
   </head>
-  <body></body>
+  <body>
+    <canvas width="600" height="600"></canvas>
+
+    <script>
+      //canvas
+      const canvas = document.querySelector("canvas");
+      const ctx = canvas.getContext("2d");
+
+      //player
+      const snakeSize = 50;
+      let snakePosX = 0;
+      let snakePosY = canvas.height / 2 - snakeSize / 2;
+      let snakeSpeed = 4;
+
+      //game loop
+      function gameLoop() {
+        ctx.fillStyle = "yellow";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        snakePosX += snakeSpeed;
+
+        if (snakePosX > canvas.width) {
+          snakePosX = 0;
+        }
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(snakePosX, snakePosY, snakeSize, snakeSize);
+
+        requestAnimationFrame(gameLoop);
+      }
+      gameLoop();
+    </script>
+  </body>
 </html>
