@@ -6,7 +6,24 @@
     <title>Snake Game</title>
   </head>
   <body>
+    <style>
+      body {
+        background-color: #a4ec00;
+        text-align: center;
+      }
+
+      canvas {
+        border: 10px solid black;
+      }
+
+      h1 {
+        font-family: "Avenir Next", Verdana;
+        font-weight: bold;
+      }
+    </style>
+
     <canvas width="600" height="600"></canvas>
+    <h1>0</h1>
 
     <script>
       //listeners
@@ -14,10 +31,11 @@
 
       //canvas
       const canvas = document.querySelector("canvas");
+      const title = document.querySelector("h1");
       const ctx = canvas.getContext("2d");
 
       //player
-      const snakeSize = 15;
+      const snakeSize = 30;
       let snakePosX = 0;
       let snakePosY = canvas.height / 2;
       let snakeSpeed = snakeSize;
@@ -28,6 +46,12 @@
       //tile count
       const tileCountX = canvas.width / snakeSize;
       const tileCountY = canvas.height / snakeSize;
+
+      //food
+      let foodPosX = 0;
+      let foodPosY = 0;
+
+      let score = 0;
 
       //game loop
       function gameLoop() {
@@ -41,7 +65,7 @@
       function moveStuff() {
         snakePosX += snakeSpeed * velocityX;
         snakePosY += snakeSpeed * velocityY;
-
+        //wall collisions
         if (snakePosX > canvas.width) {
           snakePosX = 0;
         }
@@ -57,7 +81,11 @@
         if (snakePosY < 0) {
           snakePosY = canvas.height;
         }
-        setTimeout(gameLoop, 1000 / 25);
+        //food collision
+        if (snakePosX === foodPosX && snakePosY === foodPosY) {
+          title.textContent = ++score;
+        }
+        resetFood();
       }
 
       function drawStuff() {
@@ -67,6 +95,8 @@
         drawGrid();
         //snake
         rectangle("black", snakePosX, snakePosY, snakeSize, snakeSize);
+        //food
+        rectangle("red", foodPosX, foodPosY, snakeSize, snakeSize);
       }
 
       function rectangle(color, x, y, width, height) {
@@ -78,7 +108,7 @@
         for (let i = 0; i < tileCountX; i++) {
           for (let j = 0; j < tileCountY; j++) {
             rectangle(
-              "green",
+              "#f59d12",
               snakeSize * i,
               snakeSize * j,
               snakeSize - 1,
@@ -86,6 +116,15 @@
             );
           }
         }
+      }
+
+      //randomize food position
+      function resetFood() {
+        if (snakePosX === foodPosX && snakePosY === foodPosY) {
+          foodPosX = Math.floor(Math.random() * tileCountX) * snakeSize;
+          foodPosY = Math.floor(Math.random() * tileCountY) * snakeSize;
+        }
+        setTimeout(gameLoop, 1000 / 10);
       }
 
       //keyboard functions
