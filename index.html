@@ -19,11 +19,15 @@
       //player
       const snakeSize = 15;
       let snakePosX = 0;
-      let snakePosY = canvas.height / 2 - snakeSize / 2;
-      let snakeSpeed = 4;
+      let snakePosY = canvas.height / 2;
+      let snakeSpeed = snakeSize;
 
       let velocityX = 0;
       let velocityY = 0;
+
+      //tile count
+      const tileCountX = canvas.width / snakeSize;
+      const tileCountY = canvas.height / snakeSize;
 
       //game loop
       function gameLoop() {
@@ -42,7 +46,7 @@
           snakePosX = 0;
         }
 
-        if (snakePosX < -snakeSize) {
+        if (snakePosX < 0) {
           snakePosX = canvas.width;
         }
 
@@ -50,17 +54,29 @@
           snakePosY = 0;
         }
 
-        if (snakePosY < -snakeSize) {
+        if (snakePosY < 0) {
           snakePosY = canvas.height;
         }
         setTimeout(gameLoop, 1000 / 25);
       }
 
       function drawStuff() {
+        //background
         rectangle("yellow", 0, 0, canvas.width, canvas.height);
+        //grid
+        drawGrid();
+        //snake
+        rectangle("black", snakePosX, snakePosY, snakeSize, snakeSize);
+      }
 
-        for (let i = 0; i < canvas.width / snakeSize; i++) {
-          for (let j = 0; j < canvas.height / snakeSize; j++) {
+      function rectangle(color, x, y, width, height) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, width, height);
+      }
+
+      function drawGrid() {
+        for (let i = 0; i < tileCountX; i++) {
+          for (let j = 0; j < tileCountY; j++) {
             rectangle(
               "green",
               snakeSize * i,
@@ -70,13 +86,6 @@
             );
           }
         }
-
-        rectangle("black", snakePosX, snakePosY, snakeSize, snakeSize);
-      }
-
-      function rectangle(color, x, y, width, height) {
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, width, height);
       }
 
       //keyboard functions
