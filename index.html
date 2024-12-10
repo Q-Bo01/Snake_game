@@ -8,7 +8,7 @@
   <body>
     <style>
       body {
-        background-color: #a4ec00;
+        background-color: #7bd811;
         margin: 0;
         display: flex;
         align-items: center;
@@ -22,20 +22,35 @@
       .game-container {
         display: flex;
         align-items: center;
-        gap: 20px; /* Space between score and canvas */
+        gap: 20px; /* Space between canvas and score */
+      }
+
+      .score {
+        text-align: center;
+      }
+
+      h2,
+      h1 {
+        font-family: "Avenir Next", Verdana;
+        font-size: 2.5em;
+        margin: 0;
+      }
+
+      h2 {
+        letter-spacing: 1px;
+        color: black;
       }
 
       h1 {
-        font-family: "Avenir Next", Verdana;
-        font-weight: bold;
-        font-size: 4em;
-        margin-left: 0;
-        letter-spacing: -10px;
+        color: black;
       }
     </style>
     <div class="game-container">
       <canvas width="600" height="600"></canvas>
-      <h1>0</h1>
+      <div class="score">
+        <h2>SCORE:</h2>
+        <h1>0</h1>
+      </div>
     </div>
 
     <script>
@@ -71,6 +86,8 @@
       //food
       let foodPosX = 0;
       let foodPosY = 0;
+      resetFood();
+      gameLoop();
 
       //game loop
       function gameLoop() {
@@ -81,29 +98,30 @@
         }
       }
 
-      resetFood();
-      gameLoop();
-
       //enviroment functions
 
       function moveStuff() {
         snakePosX += snakeSpeed * velocityX;
         snakePosY += snakeSpeed * velocityY;
         //wall collisions
-        if (snakePosX > canvas.width) {
-          snakePosX = 0;
+        if (snakePosX > canvas.width - tileSize) {
+          // snakePosX = 0;
+          gameOver();
         }
 
         if (snakePosX < 0) {
-          snakePosX = canvas.width;
+          // snakePosX = canvas.width;
+          gameOver();
         }
 
-        if (snakePosY > canvas.height) {
-          snakePosY = 0;
+        if (snakePosY > canvas.height - tileSize) {
+          // snakePosY = 0;
+          gameOver();
         }
 
         if (snakePosY < 0) {
-          snakePosY = canvas.height;
+          // snakePosY = canvas.height;
+          gameOver();
         }
         //GAME OVER (crash into myself)
         tail.forEach((snakePart) => {
@@ -122,8 +140,8 @@
         if (snakePosX === foodPosX && snakePosY === foodPosY) {
           title.textContent = ++score;
           snakeLength++;
+          resetFood();
         }
-        resetFood();
       }
 
       function drawStuff() {
@@ -162,16 +180,43 @@
 
       //randomize food position
       function resetFood() {
-        if (snakePosX === foodPosX && snakePosY === foodPosY) {
-          foodPosX = Math.floor(Math.random() * tileCountX) * tileSize;
-          foodPosY = Math.floor(Math.random() * tileCountY) * tileSize;
+        let validPositions = [];
+
+        // Identify all valid positions on the grid
+        for (let x = 0; x < tileCountX; x++) {
+          for (let y = 0; y < tileCountY; y++) {
+            const posX = x * tileSize;
+            const posY = y * tileSize;
+
+            // Check if the position is free from the snake's body
+            const isOccupied = tail.some(
+              (snakePart) => snakePart.x === posX && snakePart.y === posY
+            );
+
+            if (!isOccupied && !(posX === snakePosX && posY === snakePosY)) {
+              validPositions.push({ x: posX, y: posY });
+            }
+          }
         }
+
+        // If there are no valid positions, end the game
+        if (validPositions.length === 0) {
+          gameOver();
+          return;
+        }
+
+        // Randomly select a valid position for the food
+        const newFoodPosition =
+          validPositions[Math.floor(Math.random() * validPositions.length)];
+        foodPosX = newFoodPosition.x;
+        foodPosY = newFoodPosition.y;
       }
 
       //game over
       function gameOver() {
         gameIsRunnig = false;
-        title.innerHTML = `Final score: ${score}`;
+        const scoreContainer = document.querySelector(".score");
+        scoreContainer.innerHTML = `<h1 style="color:red;">!!!GAME OVER!!!<br>    FINAL SCORE: ${score}</h1>`;
       }
 
       //keyboard functions
@@ -202,7 +247,7 @@
             }
             break;
           default:
-            //restart game by pressing any key(except arrows)
+            //restart game by pressing any key(except the arrow keys)
             if (!gameIsRunnig) location.reload();
         }
       }
