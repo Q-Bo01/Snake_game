@@ -22,11 +22,19 @@
       .game-container {
         display: flex;
         align-items: center;
-        gap: 20px; /* Space between canvas and score */
+        gap: 20px;
+        padding-left: 300px;
+        padding-top: 15px;
       }
 
       .score {
         text-align: center;
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: 20px;
+        margin-right: auto;
       }
 
       h2,
@@ -43,14 +51,16 @@
 
       h1 {
         color: black;
+        min-height: 1em;
       }
     </style>
+
     <div class="game-container">
       <canvas width="600" height="600"></canvas>
-      <div class="score">
-        <h2>SCORE:</h2>
-        <h1>0</h1>
-      </div>
+    </div>
+    <div class="score">
+      <h2>SCORE:</h2>
+      <h1>0</h1>
     </div>
 
     <script>
@@ -216,7 +226,7 @@
       function gameOver() {
         gameIsRunnig = false;
         const scoreContainer = document.querySelector(".score");
-        scoreContainer.innerHTML = `<h1 style="color:red;">!!!GAME OVER!!!<br>    FINAL SCORE: ${score}</h1>`;
+        scoreContainer.innerHTML = `<h1 style="color:red";>!!!GAME OVER!!!<br>FINAL SCORE: ${score}</h1>`;
       }
 
       //keyboard functions
